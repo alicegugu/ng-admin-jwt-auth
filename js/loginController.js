@@ -21,14 +21,15 @@ loginController.prototype.login = function() {
 
 loginController.prototype.google_login = function(googleUser) {
 
+
+    var that = this;
+
     var success = this.ngAdminJWTAuthConfigurator.getLoginSuccessCallback() || function(response) {
 		    that.$location.path('/');
 	  };
 	  var error = this.ngAdminJWTAuthConfigurator.getLoginErrorCallback() || function(response) {
         console.log('authentication failed');
 	  };
-
-    var that = this;
     var profile = googleUser.getBasicProfile();
     console.log("ID: " + profile.getId());
             //      console.log("Name: " + profile.getName()); -->
