@@ -113,16 +113,40 @@ loginController.prototype.login = function() {
 	var error = this.ngAdminJWTAuthConfigurator.getLoginErrorCallback() || function(response) {
 		that.notification.log(response.data.message, { addnCls: 'humane-flatty-error' });
 	};
-	
-	
-	
-	this.ngAdminJWTAuthService.authenticate(this.data, success, error);
-	 
 };
+
+loginController.prototype.google_login = function(googleUser) {
+
+    var profile = googleUser.getBasicProfile();
+    console.log("ID: " + profile.getId());
+            //      console.log("Name: " + profile.getName()); -->
+            ///      console.log("Image URL: " + profile.getImageUrl()); -->
+            //      console.log("Email: " + profile.getEmail()); -->
+
+            //The ID token you need to pass to your backend: -->
+    var id_token = googleUser.getAuthResponse().id_token;
+           //    console.log("ID Token: " + id_token);
+
+    var url = 'http://admin.cafe.lol.garena.com:8000/ajax-auth/google-login/?idtoken='+id_token;
+    var xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            var myArr = JSON.parse(xmlhttp.responseText);
+            console.log(myArr);
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+
+
+};
+
 
 loginController.$inject = ['$rootScope', '$scope', 'ngAdminJWTAuthService', 'ngAdminJWTAuthConfigurator', 'notification', '$location'];
 
 module.exports = loginController;
+
 },{}],4:[function(require,module,exports){
 var loginTemplate = '<div class=\"container\">\n    <form style=\"max-width: 330px; padding: 15px; margin: 0 auto;\" class=\"form-login\" name=\"loginController.form\"  ng-submit=\"loginController.login()\">\n        <h2 class=\"form-login-heading\">Please log in<\/h2>\n        <div class=\"form-group\">\n            <label for=\"inputLogin\" class=\"sr-only\">Login<\/label>\n            <input type=\"text\" id=\"inputLogin\" class=\"form-control\" placeholder=\"Login\" ng-model=\"loginController.data.login\" ng-required=\"true\" ng-minlength=\"3\" ng-enter=\"loginController.login()\">\n        <\/div>\n        <div class=\"form-group\">\n            <label for=\"inputPassword\" class=\"sr-only\">Password<\/label>\n            <input type=\"password\" id=\"inputPassword\" class=\"form-control\" placeholder=\"Password\" ng-model=\"loginController.data.password\" ng-required=\"true\" ng-minlength=\"4\" ng-enter=\"loginController.login()\">\n        <\/div>\n\n        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" ng-disabled=\"loginController.form.$invalid\">Login<\/button>\n    <\/form>\n<\/div>';
 
