@@ -8,7 +8,7 @@ var ngAdminJWTAuthService = function($http, jwtHelper, ngAdminJWTAuthConfigurato
 		},
 
 		isAuthenticated: function() {
-        if(localStorage.login == false) {
+        if(localStorage.login === 'false') {
             console.log(localStorage.login);
             return false;
         }else {
