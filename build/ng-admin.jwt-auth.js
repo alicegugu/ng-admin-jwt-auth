@@ -109,7 +109,7 @@ loginController.prototype.login = function() {
 	var success = this.ngAdminJWTAuthConfigurator.getLoginSuccessCallback() || function(response) {
 		that.notification.log(response.data.message, { addnCls: 'humane-flatty-success' });
 		that.$location.path('/');
-	};		
+	};
 	var error = this.ngAdminJWTAuthConfigurator.getLoginErrorCallback() || function(response) {
 		that.notification.log(response.data.message, { addnCls: 'humane-flatty-error' });
 	};
@@ -117,6 +117,7 @@ loginController.prototype.login = function() {
 
 loginController.prototype.google_login = function(googleUser) {
 
+    var that = this;
     var profile = googleUser.getBasicProfile();
     console.log("ID: " + profile.getId());
             //      console.log("Name: " + profile.getName()); -->
@@ -134,6 +135,13 @@ loginController.prototype.google_login = function(googleUser) {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             var myArr = JSON.parse(xmlhttp.responseText);
             console.log(myArr);
+
+            if (myArr['login'] ) {
+		            that.$location.path('/');
+            }else
+            {
+                console.log('Failed to login');
+            }
         }
     };
     xmlhttp.open("GET", url, true);
