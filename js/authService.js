@@ -2,44 +2,20 @@ var ngAdminJWTAuthService = function($http, jwtHelper, ngAdminJWTAuthConfigurato
 	
 	return {
 		authenticate: function(data, successCallback, errorCallback) {
-			var url = ngAdminJWTAuthConfigurator.getAuthURL();
+				localStorage.login = data.login;
+				successCallback(response);
 
-			return $http({
-				url: url,
-				method: 'POST',
-				data: data
-			}).then(function(response) {
-				var payload = jwtHelper.decodeToken(response.data.token);
-				
-				localStorage.userToken = response.data.token;
-				localStorage.userRole = payload.role;
-				
-				successCallback(response); 
-				
-				var customAuthHeader = ngAdminJWTAuthConfigurator.getCustomAuthHeader();
-				if (customAuthHeader) {
-					$http.defaults.headers.common[customAuthHeader.name] = customAuthHeader.template.replace('{{token}}', response.data.token);
-				} else {
-					$http.defaults.headers.common.Authorization = 'Basic ' + response.data.token;
-				}
-			} , errorCallback);
 		},
-		
+
 		isAuthenticated: function() {
-			var token = localStorage.userToken;
-			if (!token) {
-				return false;
-			}
-			return jwtHelper.isTokenExpired(token) ? false : true;
+        return localStorage.login;
 		},
-		
+
 		logout: function() {
-			localStorage.removeItem('userRole');
-			localStorage.removeItem('userToken');
+			localStorage.removeItem('login');
 			return true;
 		}
-	}
-	
+	};
 };
 
 ngAdminJWTAuthService.$inject = ['$http', 'jwtHelper', 'ngAdminJWTAuthConfigurator'];

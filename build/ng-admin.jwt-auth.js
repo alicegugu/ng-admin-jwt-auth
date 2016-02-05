@@ -3,6 +3,31 @@ var ngAdminJWTAuthService = function($http, jwtHelper, ngAdminJWTAuthConfigurato
 	
 	return {
 		authenticate: function(data, successCallback, errorCallback) {
+				localStorage.login = data.login;
+				successCallback(response);
+
+		},
+
+		isAuthenticated: function() {
+        return localStorage.login;
+		},
+
+		logout: function() {
+			localStorage.removeItem('login');
+			return true;
+		}
+	};
+};
+
+ngAdminJWTAuthService.$inject = ['$http', 'jwtHelper', 'ngAdminJWTAuthConfigurator'];
+
+module.exports = ngAdminJWTAuthService;
+
+},{}],2:[function(require,module,exports){
+var ngAdminJWTAuthService = function($http, jwtHelper, ngAdminJWTAuthConfigurator) { 
+	
+	return {
+		authenticate: function(data, successCallback, errorCallback) {
 			var url = ngAdminJWTAuthConfigurator.getAuthURL();
 
 			return $http({
@@ -46,7 +71,7 @@ var ngAdminJWTAuthService = function($http, jwtHelper, ngAdminJWTAuthConfigurato
 ngAdminJWTAuthService.$inject = ['$http', 'jwtHelper', 'ngAdminJWTAuthConfigurator'];
 
 module.exports = ngAdminJWTAuthService;
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var ngAdminJWTAuthConfiguratorProvider = function() {
 	var authConfigs = {};
 	
@@ -93,7 +118,7 @@ var ngAdminJWTAuthConfiguratorProvider = function() {
 };
 
 module.exports = ngAdminJWTAuthConfiguratorProvider;
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var loginController = function($scope, $rootScope, ngAdminJWTAuthService, ngAdminJWTAuthConfigurator, notification, $location) {
 	this.$scope = $scope;
 	this.$rootScope = $rootScope;
@@ -155,11 +180,11 @@ loginController.$inject = ['$rootScope', '$scope', 'ngAdminJWTAuthService', 'ngA
 
 module.exports = loginController;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var loginTemplate = '<div class=\"container\">\n    <form style=\"max-width: 330px; padding: 15px; margin: 0 auto;\" class=\"form-login\" name=\"loginController.form\"  ng-submit=\"loginController.login()\">\n        <h2 class=\"form-login-heading\">Please log in<\/h2>\n        <div class=\"form-group\">\n            <label for=\"inputLogin\" class=\"sr-only\">Login<\/label>\n            <input type=\"text\" id=\"inputLogin\" class=\"form-control\" placeholder=\"Login\" ng-model=\"loginController.data.login\" ng-required=\"true\" ng-minlength=\"3\" ng-enter=\"loginController.login()\">\n        <\/div>\n        <div class=\"form-group\">\n            <label for=\"inputPassword\" class=\"sr-only\">Password<\/label>\n            <input type=\"password\" id=\"inputPassword\" class=\"form-control\" placeholder=\"Password\" ng-model=\"loginController.data.password\" ng-required=\"true\" ng-minlength=\"4\" ng-enter=\"loginController.login()\">\n        <\/div>\n\n        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\" ng-disabled=\"loginController.form.$invalid\">Login<\/button>\n    <\/form>\n<\/div>';
 
 module.exports = loginTemplate;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var logoutController = function($scope, ngAdminJWTAuthService, $location) {
 	ngAdminJWTAuthService.logout();
 	$location.path('/login');
@@ -168,7 +193,7 @@ var logoutController = function($scope, ngAdminJWTAuthService, $location) {
 logoutController.$inject = ['$scope', 'ngAdminJWTAuthService', '$location'];
 
 module.exports = logoutController;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var ngAdminJWTAuth = angular.module('ng-admin.jwt-auth', ['angular-jwt']);
@@ -240,6 +265,6 @@ ngAdminJWTAuth.controller('logoutController', require('./logoutController'));
 ngAdminJWTAuth.provider('ngAdminJWTAuthConfigurator', require('./configuratorProvider'));
 
 ngAdminJWTAuth.service('ngAdminJWTAuthService', require('./authService'));
-},{"./authService":1,"./configuratorProvider":2,"./loginController":3,"./loginTemplate":4,"./logoutController":5}],7:[function(require,module,exports){
+},{"./authService":1,"./configuratorProvider":3,"./loginController":4,"./loginTemplate":5,"./logoutController":6}],8:[function(require,module,exports){
 !function(){angular.module("angular-jwt",["angular-jwt.interceptor","angular-jwt.jwt"]),angular.module("angular-jwt.interceptor",[]).provider("jwtInterceptor",function(){this.urlParam=null,this.authHeader="Authorization",this.authPrefix="Bearer ",this.tokenGetter=function(){return null};var e=this;this.$get=["$q","$injector","$rootScope",function(r,t,a){return{request:function(a){if(a.skipAuthorization)return a;if(e.urlParam){if(a.params=a.params||{},a.params[e.urlParam])return a}else if(a.headers=a.headers||{},a.headers[e.authHeader])return a;var n=r.when(t.invoke(e.tokenGetter,this,{config:a}));return n.then(function(r){return r&&(e.urlParam?a.params[e.urlParam]=r:a.headers[e.authHeader]=e.authPrefix+r),a})},responseError:function(e){return 401===e.status&&a.$broadcast("unauthenticated",e),r.reject(e)}}}]}),angular.module("angular-jwt.jwt",[]).service("jwtHelper",function(){this.urlBase64Decode=function(e){var r=e.replace(/-/g,"+").replace(/_/g,"/");switch(r.length%4){case 0:break;case 2:r+="==";break;case 3:r+="=";break;default:throw"Illegal base64url string!"}return decodeURIComponent(escape(window.atob(r)))},this.decodeToken=function(e){var r=e.split(".");if(3!==r.length)throw new Error("JWT must have 3 parts");var t=this.urlBase64Decode(r[1]);if(!t)throw new Error("Cannot decode the token");return JSON.parse(t)},this.getTokenExpirationDate=function(e){var r;if(r=this.decodeToken(e),"undefined"==typeof r.exp)return null;var t=new Date(0);return t.setUTCSeconds(r.exp),t},this.isTokenExpired=function(e,r){var t=this.getTokenExpirationDate(e);return r=r||0,null===t?!1:!(t.valueOf()>(new Date).valueOf()+1e3*r)}})}();
-},{}]},{},[7,1,2,3,4,5,6]);
+},{}]},{},[8,1,2,3,4,5,6,7]);
