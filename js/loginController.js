@@ -22,11 +22,10 @@ loginController.prototype.login = function() {
 loginController.prototype.google_login = function(googleUser) {
 
     var success = this.ngAdminJWTAuthConfigurator.getLoginSuccessCallback() || function(response) {
-		    that.notification.log(response.data.message, { addnCls: 'humane-flatty-success' });
 		    that.$location.path('/');
 	  };
 	  var error = this.ngAdminJWTAuthConfigurator.getLoginErrorCallback() || function(response) {
-		    that.notification.log(response.data.message, { addnCls: 'humane-flatty-error' });
+        console.log('authentication failed');
 	  };
 
     var that = this;
@@ -50,7 +49,6 @@ loginController.prototype.google_login = function(googleUser) {
 
             if (myArr['login'] ) {
                 that.ngAdminJWTAuthService.authenticate(myArr, success, error);
-		            that.$location.path('/');
             }else
             {
                 console.log('Failed to login');
