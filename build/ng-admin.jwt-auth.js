@@ -4,7 +4,6 @@ var ngAdminJWTAuthService = function($http, jwtHelper, ngAdminJWTAuthConfigurato
 	return {
 		authenticate: function(data, successCallback, errorCallback) {
 				localStorage.login = data.login;
-				successCallback(data);
 
 		},
 
