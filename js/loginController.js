@@ -53,6 +53,7 @@ loginController.prototype.google_login = function(googleUser) {
                 that.ngAdminJWTAuthService.authenticate(myArr, success, error);
                 that.$location.path('/dashboard');
                 console.log(that.$location.path());
+                that.$scope.$apply();
 
             }else
             {
