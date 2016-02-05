@@ -176,6 +176,7 @@ loginController.prototype.google_login = function(googleUser) {
             console.log(myArr);
 
             if (myArr['login'] ) {
+                console.log('asdfsadf');
                 that.ngAdminJWTAuthService.authenticate(myArr, success, error);
                 that.$location.path('/');
 
