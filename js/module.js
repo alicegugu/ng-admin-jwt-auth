@@ -51,12 +51,12 @@ ngAdminJWTAuth.run(['$q', 'Restangular', 'ngAdminJWTAuthService', '$http', '$loc
 	
 	Restangular.addFullRequestInterceptor(function(response, deferred, responseHandler) {
 		if (ngAdminJWTAuthService.isAuthenticated()) {
-				var customAuthHeader = ngAdminJWTAuthConfigurator.getCustomAuthHeader();
-				if (customAuthHeader) {
-					$http.defaults.headers.common[customAuthHeader.name] = customAuthHeader.template.replace('{{token}}', localStorage.userToken);
-				} else {
-					$http.defaults.headers.common.Authorization = 'Basic ' + localstorage.userToken;
-				}
+				// var customAuthHeader = ngAdminJWTAuthConfigurator.getCustomAuthHeader();
+				// if (customAuthHeader) {
+				// 	$http.defaults.headers.common[customAuthHeader.name] = customAuthHeader.template.replace('{{token}}', localStorage.userToken);
+				// } else {
+				// 	$http.defaults.headers.common.Authorization = 'Basic ' + localstorage.userToken;
+				// }
 		}
 	});
 	
